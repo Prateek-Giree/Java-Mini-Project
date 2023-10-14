@@ -62,7 +62,7 @@ public class TicTacToe implements ActionListener {
                 //checking if this is player1's turn
                 if (player1_turn) {
                     //check if that specific button already has text
-                    if (btn[i].getText() == "") {
+                    if (btn[i].getText().isEmpty()) {
                         btn[i].setForeground(new Color(169, 3, 252));
                         btn[i].setText("X");
                         player1_turn = false;
@@ -72,7 +72,7 @@ public class TicTacToe implements ActionListener {
                     }
                 }
                 else {
-                    if (btn[i].getText() == "") {
+                    if (btn[i].getText().isEmpty()) {
                         btn[i].setForeground(new Color(0, 255, 255));
                         btn[i].setText("O");
                         player1_turn = true;
@@ -102,66 +102,65 @@ public class TicTacToe implements ActionListener {
             lbl.setText("Player O's turn");
     }
 
-    public void checkWin(){
-        //check player x win condition
-        if (btn[0].getText() == "X" && btn[1].getText() == "X" && btn[2].getText() == "X")
-            playerXWin(0, 1, 2);
+    // returns a space if the button is empty, else returns the symbol contained by button
+    private char symbolOnButton(int index) {
+        if(btn[index].getText().isEmpty()) {
+            return ' ';
+        }
+        return btn[index].getText().charAt(0);
+    }
 
+    // returns true if the buttons indexed by a, b and c contain the same symbol, symbol being 'X' or 'O'
+    private boolean sameSymbolOn(int a, int b, int c) {
+        return symbolOnButton(a) == symbolOnButton(b) && symbolOnButton(b) == symbolOnButton(c) && symbolOnButton(a) != ' ';
+    }
 
-        if (btn[0].getText() == "X" && btn[3].getText() == "X" && btn[6].getText() == "X")
-            playerXWin(0,3,6);
+    public void checkWin() {
+        if (sameSymbolOn(0, 1, 2)) {
+            handleWinner(0, 1, 2);
+            return;
+        }
 
+        if (sameSymbolOn(0, 3, 6)) {
+            handleWinner(0, 3, 6);
+            return;
+        }
 
-        if (btn[0].getText() == "X" && btn[4].getText() == "X" && btn[8].getText() == "X")
-            playerXWin(0,4,8);
+        if (sameSymbolOn(0, 4, 8)) {
+            handleWinner(0, 4, 8);
+            return;
+        }
 
+        if (sameSymbolOn(3,4,5)) {
+            handleWinner(3,4,5);
+            return;
+        }
 
-        if (btn[3].getText() == "X" && btn[4].getText() == "X" && btn[5].getText() == "X")
-            playerXWin(3,4,5);
+        if (sameSymbolOn(6,7,8)) {
+            handleWinner(6, 7, 8);
+            return;
+        }
 
-        if (btn[6].getText() == "X" && btn[7].getText() == "X" && btn[8].getText() == "X")
-            playerXWin(6, 7, 8);
+        if(sameSymbolOn(1,4,7)) {
+            handleWinner(1, 4, 7);
+            return;
+        }
 
-        if (btn[1].getText() == "X" && btn[4].getText() == "X" && btn[7].getText() == "X")
-            playerXWin(1, 4, 7);
+        if (sameSymbolOn(2,5,8)) {
+            handleWinner(2, 5, 8);
+            return;
+        }
 
-        if (btn[2].getText() == "X" && btn[5].getText() == "X" && btn[8].getText() == "X")
-            playerXWin(2, 5, 8);
+        if (sameSymbolOn(2,4,6)) {
+            handleWinner(2, 4, 6);
+            return;
+        }
 
-        if (btn[2].getText() == "X" && btn[4].getText() == "X" && btn[6].getText() == "X")
-            playerXWin(2, 4, 6);
-
-        //check player o win condition
-        if (btn[0].getText() == "O" && btn[1].getText() == "O" && btn[2].getText() == "O")
-            playerOWin(0, 1, 2);
-
-        if (btn[0].getText() == "O" && btn[3].getText() == "O" && btn[6].getText() == "O")
-            playerOWin(0, 3, 6);
-
-        if (btn[0].getText() == "O" && btn[4].getText() == "O" && btn[8].getText() == "O")
-            playerOWin(0, 4, 8);
-
-        if (btn[3].getText() == "O" && btn[4].getText() == "O" && btn[5].getText() == "O")
-            playerOWin(3, 4, 5);
-
-        if (btn[6].getText() == "O" && btn[7].getText() == "O" && btn[8].getText() == "O")
-            playerOWin(6, 7, 8);
-
-        if (btn[1].getText() == "O" && btn[4].getText() == "O" && btn[7].getText() == "O")
-            playerOWin(1, 4, 7);
-
-        if (btn[2].getText() == "O" && btn[5].getText() == "O" && btn[8].getText() == "O")
-            playerOWin(2, 5, 8);
-
-        if (btn[2].getText() == "O" && btn[4].getText() == "O" && btn[6].getText() == "O")
-            playerOWin(2, 4, 6);
-
-        else
-            gameDraw();
+        gameDraw(); // the game is either unfinished or drawn if we reach here
 
     }
 
-    public void playerXWin(int a, int b, int c) {
+    public void handleWinner(int a, int b, int c) {
         btn[a].setBackground(Color.GREEN);
         btn[b].setBackground(Color.GREEN);
         btn[c].setBackground(Color.GREEN);
@@ -170,30 +169,7 @@ public class TicTacToe implements ActionListener {
         for (int i = 0; i < 9; i++) {
             btn[i].setEnabled(false);
         }
-        lbl.setText("Player X has won");
-
-        new Thread(() -> {
-            try {
-                Thread.sleep(2000); // Wait for 2 seconds
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-
-            // Reset the game after 2 seconds
-            newGame();
-        }).start();
-    }
-    public void playerOWin(int a, int b, int c) {
-        btn[a].setBackground(Color.GREEN);
-        btn[b].setBackground(Color.GREEN);
-        btn[c].setBackground(Color.GREEN);
-
-        //disabling buttons to prevent further interaction
-        for (int i = 0; i < 9; i++) {
-            btn[i].setEnabled(false);
-        }
-        lbl.setText("Player O has won");
-
+        lbl.setText("Player " + symbolOnButton(a) + " has won");
 
         new Thread(() -> {
             try {
