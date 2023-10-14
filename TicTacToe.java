@@ -93,7 +93,6 @@ public class TicTacToe implements ActionListener {
             throw new RuntimeException(e);
         }
         int turn = random.nextInt(2);
-        System.out.println(turn);
         if (turn == 0) {
             player1_turn = true;
             lbl.setText("Player X's turn");
